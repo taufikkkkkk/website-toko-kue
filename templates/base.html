@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Oven & Dough | Premium Bakery{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-enter { animation: slideInRight 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800 font-sans flex flex-col min-h-screen relative">
+
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-sm py-4 sticky top-0 z-50 border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="{{ url_for('home') }}" class="text-2xl font-black text-gray-900 tracking-wider flex items-center gap-2">
+                🧁 OVEN<span class="text-amber-600">&</span>DOUGH
+            </a>
+            
+            <form action="{{ url_for('home') }}" method="GET" class="w-full md:w-1/3 relative group">
+                <input type="text" name="q" placeholder="Cari kue favoritmu..." 
+                       class="w-full bg-gray-100 rounded-full py-2.5 pl-5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition group-hover:bg-gray-50">
+                <button type="submit" class="absolute right-4 top-2.5 text-gray-400 hover:text-amber-600">🔍</button>
+            </form>
+
+            <ul class="flex space-x-6 text-sm font-bold text-gray-600 items-center">
+                <li><a href="{{ url_for('home') }}" class="hover:text-amber-600 transition">Beranda</a></li>
+                <li><a href="{{ url_for('home') }}#menu" class="hover:text-amber-600 transition">Menu</a></li>
+                
+                <!-- TOMBOL LOGIN / DASHBOARD DI NAVBAR ATAS -->
+                {% if session.get('admin_logged_in') %}
+                    <li><a href="{{ url_for('dashboard') }}" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-200 transition shadow-sm">⚙️ Dashboard</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" class="text-gray-400 hover:text-amber-600 transition">Login Admin</a></li>
+                {% endif %}
+
+                <li>
+                    <a href="{{ url_for('halaman_keranjang') }}" class="flex items-center gap-2 bg-gray-900 hover:bg-amber-600 text-white transition px-4 py-2 rounded-full shadow-md hover:shadow-lg">
+                        🛒
+                        {% set total_item = 0 %}
+                        {% if session.get('keranjang') %}
+                            {% for item in session['keranjang'] %}
+                                {% set total_item = total_item + item.qty %}
+                            {% endfor %}
+                            <span class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-extrabold">{{ total_item }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Smart Flash Toasts -->
+    <div id="toast-container" class="fixed top-24 right-4 z-[60] flex flex-col gap-2">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="toast-message toast-enter px-6 py-4 rounded-xl flex items-center shadow-xl border-l-4
+                        {% if category == 'success' %} bg-white text-gray-800 border-green-500 
+                        {% elif category == 'error' %} bg-white text-gray-800 border-red-500 
+                        {% else %} bg-white text-gray-800 border-blue-500 {% endif %}">
+                        <span class="text-2xl mr-3">
+                            {% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}ℹ️{% endif %}
+                        </span>
+                        <div class="font-semibold text-sm">{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <script>
+        setTimeout(function() {
+            let toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach(function(toast) {
+                toast.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 500);
+            });
+        }, 3000);
+    </script>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 text-white pt-16 pb-8 mt-auto border-t-4 border-amber-600">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-center md:text-left">
+            <div>
+                <h3 class="text-2xl font-black text-white mb-4">OVEN<span class="text-amber-500">&</span>DOUGH</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Memanggang kebahagiaan setiap hari dengan bahan premium 100% natural tanpa pengawet.</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Link Cepat</h3>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <!-- Link mati sudah diarahkan ke home -->
+                    <li><a href="{{ url_for('home') }}" class="hover:text-amber-500 transition">Tentang Kami</a></li>
+                    <li><a href="{{ url_for('home') }}#menu" class="hover:text-amber-500 transition">Katalog Menu</a></li>
+                    <li><a href="{{ url_for('kontak') }}" class="hover:text-amber-500 transition">Hubungi Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Temukan Kami</h3>
+                <p class="text-gray-400 text-sm mb-4">Jl. Pangeran Diponegoro No. 12<br>Banda Aceh, Indonesia</p>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500 font-semibold">
+            &copy; 2026 Oven & Dough Bakery. Dibuat oleh Taufik Rahman.
+        </div>
+    </footer>
+</body>
+</html>

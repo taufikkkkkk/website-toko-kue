@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Oven & Dough | Premium Bakery{% endblock %}
+
+{% block content %}
+<!-- Hero Section (Disembunyikan jika sedang melakukan pencarian) -->
+{% if not kata_kunci %}
+<header class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
+    <div class="inline-block bg-amber-100 text-amber-800 font-bold px-4 py-1 rounded-full text-sm mb-6 border border-amber-200">✨ Baru: Menu Musim Gugur Tersedia!</div>
+    <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">Manisnya Harimu <br> <span class="text-amber-600">Dimulai dari Sini</span></h2>
+    <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Kami memanggang setiap kue dengan bahan premium dan cinta. Temukan kue favoritmu untuk momen spesial atau sekadar teman minum kopi hari ini.</p>
+    <a href="#menu" class="bg-gray-900 text-white px-8 py-4 rounded-full font-bold hover:bg-amber-600 transition shadow-xl inline-block text-lg">Jelajahi Menu Kami</a>
+</header>
+{% endif %}
+
+<!-- Product Grid -->
+<section id="menu" class="max-w-6xl mx-auto px-4 py-12">
+    
+    {% if kata_kunci %}
+        <h3 class="text-2xl font-bold text-gray-800 mb-8 border-b pb-4">Hasil Pencarian untuk: <span class="text-amber-600">"{{ kata_kunci }}"</span></h3>
+    {% else %}
+        <div class="text-center mb-12">
+            <h3 class="text-3xl font-bold text-gray-800 mb-2">Menu Spesial Kami</h3>
+            <p class="text-gray-500">Dipanggang segar setiap pagi</p>
+        </div>
+    {% endif %}
+    
+    {% if produk %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% for kue in produk %}
+        <div class="bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden group flex flex-col border border-gray-100 relative">
+            
+            <!-- Badge Kategori -->
+            <div class="absolute top-4 left-4 z-10">
+                <span class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                    {{ kue.kategori }}
+                </span>
+            </div>
+
+            <div class="h-56 overflow-hidden relative">
+                <img src="{{ kue.gambar }}" alt="{{ kue.nama }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+            </div>
+            
+            <div class="p-5 flex flex-col flex-grow">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-xl font-bold text-gray-900 leading-tight">{{ kue.nama }}</h4>
+                </div>
+                
+                <!-- Rating & Terjual -->
+                <div class="flex items-center gap-2 mb-3 text-sm">
+                    <span class="text-amber-500">⭐ {{ kue.rating }}</span>
+                    <span class="text-gray-300">|</span>
+                    <span class="text-gray-500">{{ kue.terjual }}+ Terjual</span>
+                </div>
+
+                <p class="text-gray-500 text-sm mb-6 line-clamp-2 flex-grow">{{ kue.deskripsi }}</p>
+                
+                <div class="flex justify-between items-center mt-auto border-t pt-4 border-gray-100">
+                    <span class="text-amber-600 font-extrabold text-lg">{{ kue.harga }}</span>
+                    <a href="{{ url_for('detail_kue', kue_id=kue.id) }}" class="bg-gray-900 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition shadow-md">Detail</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20">
+        <div class="text-6xl mb-4">🕵️‍♂️</div>
+        <h3 class="text-2xl font-bold text-gray-800">Ups, Kue tidak ditemukan!</h3>
+        <p class="text-gray-500 mt-2">Coba cari dengan kata kunci lain (misal: Cokelat, Premium).</p>
+        <a href="{{ url_for('home') }}" class="inline-block mt-6 text-amber-600 font-bold hover:underline">Kembali ke semua menu</a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Testimonial Section -->
+{% if not kata_kunci %}
+<section class="bg-amber-600 py-16 mt-12">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+        <h3 class="text-3xl font-bold text-white mb-10">Apa Kata Mereka?</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-white text-left">
+                <p class="italic mb-4">"Red velvet terenak yang pernah saya coba di Banda Aceh! Cream cheese-nya pas, gak bikin eneg sama sekali."</p>
+                <div class="font-bold">- Sarah A. ⭐⭐⭐⭐⭐</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-white text-left">
+                <p class="italic mb-4">"Langganan buat acara kantor. Packaging aman, rasanya premium, dan respon admin di WA cepat banget."</p>
+                <div class="font-bold">- Budi S. ⭐⭐⭐⭐⭐</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-white text-left">
+                <p class="italic mb-4">"Matcha Mille Crepes-nya juara! Layernya rapi banget dan rasa matchanya beneran otentik Jepang."</p>
+                <div class="font-bold">- Dian P. ⭐⭐⭐⭐⭐</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

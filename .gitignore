@@ -1,0 +1,11 @@
+# Mengabaikan folder virtual environment
+venv/
+env/
+
+# Mengabaikan cache Python
+__pycache__/
+*.pyc
+
+# (Opsional) Abaikan file database jika kamu ingin database mulai dari 0 di laptop lain
+# instance/
+# *.db
