@@ -42,13 +42,14 @@
                 <li>
                     <a href="{{ url_for('halaman_keranjang') }}" class="flex items-center gap-2 bg-gray-900 hover:bg-amber-600 text-white transition px-4 py-2 rounded-full shadow-md hover:shadow-lg">
                         🛒
-                        {% set total_item = 0 %}
+                        <!-- Gunakan namespace agar angka bisa dihitung di dalam loop -->
+                        {% set ns = namespace(total=0) %}
                         {% if session.get('keranjang') %}
                             {% for item in session['keranjang'] %}
-                                {% set total_item = total_item + item.qty %}
+                                {% set ns.total = ns.total + item.qty %}
                             {% endfor %}
-                            <span class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-extrabold">{{ total_item }}</span>
                         {% endif %}
+                        <span class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-extrabold">{{ ns.total }}</span>
                     </a>
                 </li>
             </ul>
